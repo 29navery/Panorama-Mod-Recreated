@@ -35,8 +35,8 @@ implements ClientModInitializer {
 
     public void onInitializeClient() {
         KeyMapping.Category category = KeyMapping.Category.register((Identifier)Identifier.fromNamespaceAndPath((String)"panoramamod", (String)"general"));
-        captureKey = KeyMappingHelper.registerKeyMapping((KeyMapping)new KeyMapping("key.panoramamod.capture", InputConstants.Type.KEYSYM, 295, category));
-        settingsKey = KeyMappingHelper.registerKeyMapping((KeyMapping)new KeyMapping("key.panoramamod.settings", InputConstants.Type.KEYSYM, 296, category));
+        captureKey = KeyMappingHelper.registerKeyMapping((KeyMapping)new KeyMapping("key.panoramamod.capture", InputConstants.Type.KEYBOARD, 295, category));
+        settingsKey = KeyMappingHelper.registerKeyMapping((KeyMapping)new KeyMapping("key.panoramamod.settings", InputConstants.Type.KEYBOARD, 296, category));
         ClientTickEvents.END_CLIENT_TICK.register(PanoramaManager::tick);
         ClientTickEvents.END_CLIENT_TICK.register(PanoramaModClient::handleKeybinds);
     }

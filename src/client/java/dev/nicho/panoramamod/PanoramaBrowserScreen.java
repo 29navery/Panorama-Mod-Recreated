@@ -6,7 +6,6 @@
  *  com.mojang.blaze3d.platform.NativeImage
  *  net.minecraft.client.gui.GuiGraphicsExtractor
  *  net.minecraft.client.gui.components.Button
- *  net.minecraft.client.gui.components.events.GuiEventListener
  *  net.minecraft.client.gui.screens.Screen
  *  net.minecraft.client.renderer.RenderPipelines
  *  net.minecraft.client.renderer.texture.AbstractTexture
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -58,11 +56,11 @@ extends Screen {
     protected void init() {
         this.captures = PanoramaManager.loadCaptures(this.minecraft);
         int footerY = this.height - 28;
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"gui.back"), button -> this.onClose()).bounds(20, footerY, 80, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.folder"), button -> PanoramaManager.openPanoramaFolder(this.minecraft)).bounds(110, footerY, 100, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.refresh"), button -> this.refreshCaptures()).bounds(220, footerY, 80, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.literal((String)"<"), button -> this.changePage(-1)).bounds(this.width - 110, footerY, 20, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.literal((String)">"), button -> this.changePage(1)).bounds(this.width - 80, footerY, 20, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"gui.back"), button -> this.onClose()).bounds(20, footerY, 80, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.folder"), button -> PanoramaManager.openPanoramaFolder(this.minecraft)).bounds(110, footerY, 100, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.refresh"), button -> this.refreshCaptures()).bounds(220, footerY, 80, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.literal((String)"<"), button -> this.changePage(-1)).bounds(this.width - 110, footerY, 20, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.literal((String)">"), button -> this.changePage(1)).bounds(this.width - 80, footerY, 20, 20).build());
         this.rebuildTiles();
     }
 
@@ -131,7 +129,7 @@ extends Screen {
             int x = gridX + column * 136;
             int y = gridY + row * 176;
             PanoramaManager.PanoramaCapture capture = this.captures.get(index);
-            Button button = (Button)this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.empty(), widget -> this.openCaptureOptions(capture)).bounds(x, y, 118, 118).build());
+            Button button = this.addRenderableWidget(Button.builder((Component)Component.empty(), widget -> this.openCaptureOptions(capture)).bounds(x, y, 118, 118).build());
             Identifier textureId = this.loadTileTexture(capture);
             this.tiles.add(new Tile(capture, button, textureId, x, y));
         }
@@ -178,7 +176,7 @@ extends Screen {
 
     private void destroyTiles() {
         for (Tile tile : this.tiles) {
-            this.removeWidget((GuiEventListener)tile.button);
+            this.removeWidget(tile.button);
             if (tile.textureId == null) continue;
             this.minecraft.getTextureManager().release(tile.textureId);
         }
@@ -208,4 +206,3 @@ extends Screen {
     private record Tile(PanoramaManager.PanoramaCapture capture, Button button, Identifier textureId, int x, int y) {
     }
 }
-
