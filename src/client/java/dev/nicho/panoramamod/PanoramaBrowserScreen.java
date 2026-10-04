@@ -12,6 +12,7 @@ import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
@@ -76,7 +77,7 @@ public final class PanoramaBrowserScreen extends Screen {
         guiGraphics.fill(tile.x, tile.y, tile.x + 1, tile.y + 118, -1);
         guiGraphics.fill(tile.x + 118 - 1, tile.y, tile.x + 118, tile.y + 118, -1);
         if (tile.textureId != null) {
-            guiGraphics.blit(tile.textureId, tile.x + 4, tile.y + 4, 110, 110, 0.0f, 0.0f, 110, 110, 110, 110);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, tile.textureId, tile.x + 4, tile.y + 4, 0.0f, 0.0f, 110, 110, 110, 110);
         } else {
             guiGraphics.text(this.font, Component.translatable("screen.panoramamod.preview_failed"), tile.x + 8, tile.y + 10, 0xFF8080, true);
         }

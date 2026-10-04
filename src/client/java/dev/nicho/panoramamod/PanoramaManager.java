@@ -244,7 +244,7 @@ public final class PanoramaManager {
     public static void openPanoramaFolder(Minecraft client) {
         try {
             Path root = PanoramaManager.ensurePanoramaRoot(client);
-            Util.getPlatform().openUri(root.toUri());
+            Util.getPlatform().open(root.toUri());
         } catch (IOException exception) {
             PanoramaMod.LOGGER.error("Failed to open panorama folder", exception);
             PanoramaManager.sendClientMessage(client, Component.translatable("message.panoramamod.open_failed").withStyle(ChatFormatting.RED));
