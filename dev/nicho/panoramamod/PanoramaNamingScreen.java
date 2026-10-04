@@ -1,0 +1,65 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  net.minecraft.client.gui.GuiGraphicsExtractor
+ *  net.minecraft.client.gui.components.Button
+ *  net.minecraft.client.gui.components.EditBox
+ *  net.minecraft.client.gui.components.events.GuiEventListener
+ *  net.minecraft.client.gui.screens.Screen
+ *  net.minecraft.network.chat.Component
+ */
+package dev.nicho.panoramamod;
+
+import dev.nicho.panoramamod.PanoramaManager;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+public final class PanoramaNamingScreen
+extends Screen {
+    private final Screen parent;
+    private EditBox nameField;
+    private Button createButton;
+
+    public PanoramaNamingScreen(Screen parent) {
+        super((Component)Component.translatable((String)"screen.panoramamod.name_title"));
+        this.parent = parent;
+    }
+
+    protected void init() {
+        int centerX = this.width / 2;
+        this.nameField = new EditBox(this.font, centerX - 120, this.height / 2 - 10, 240, 20, (Component)Component.translatable((String)"screen.panoramamod.name_field"));
+        this.nameField.setMaxLength(40);
+        this.nameField.setValue(PanoramaManager.defaultCaptureName());
+        this.nameField.setResponder(value -> {
+            this.createButton.active = !value.trim().isEmpty();
+        });
+        this.addRenderableWidget((GuiEventListener)this.nameField);
+        this.setInitialFocus((GuiEventListener)this.nameField);
+        this.createButton = (Button)this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.start_capture"), button -> this.startCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
+        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
+        this.createButton.active = !this.nameField.getValue().trim().isEmpty();
+    }
+
+    public void onClose() {
+        this.minecraft.setScreenAndShow(this.parent);
+    }
+
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float deltaTicks) {
+        this.extractTransparentBackground(guiGraphics);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, deltaTicks);
+        guiGraphics.text(this.font, this.title, this.width / 2 - 120, this.height / 2 - 38, 0xFFFFFF, true);
+        guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.name_subtitle"), this.width / 2 - 120, this.height / 2 - 24, 0xAFAFAF, true);
+    }
+
+    private void startCapture() {
+        if (PanoramaManager.requestCapture(this.minecraft, this.nameField.getValue())) {
+            this.minecraft.setScreenAndShow(null);
+        }
+    }
+}
+
