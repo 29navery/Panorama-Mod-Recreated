@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.ChatFormatting
- *  net.minecraft.client.Minecraft
- *  net.minecraft.network.chat.Component
- *  net.minecraft.network.chat.MutableComponent
- *  net.minecraft.util.Util
- */
 package dev.nicho.panoramamod;
 
 import dev.nicho.panoramamod.PanoramaMod;
@@ -77,14 +67,18 @@ public final class PanoramaManager {
         try {
             Path outputDirectory = PanoramaManager.ensurePanoramaRoot(client).resolve(FOLDER_FORMAT.format(LocalDateTime.now()) + "_" + PanoramaManager.slugify(captureName));
             Files.createDirectories(outputDirectory, new FileAttribute[0]);
-            Files.writeString(outputDirectory.resolve(NAME_FILE), (CharSequence)captureName, new OpenOption[0]);
+            Files.writeString(outputDirectory.resolve(NAME_FILE), captureName, new OpenOption[0]);
             Component vanillaMessage = client.grabPanoramixScreenshot(outputDirectory.toFile());
-            MutableComponent message = Component.translatable((String)"message.panoramamod.capture_saved", (Object[])new Object[]{captureName}).withStyle(ChatFormatting.GREEN).append((Component)Component.literal((String)" ")).append((Component)vanillaMessage.copy()).append((Component)Component.literal((String)" ")).append((Component)Component.translatable((String)"message.panoramamod.capture_browse").withStyle(ChatFormatting.GRAY));
-            PanoramaManager.sendClientMessage(client, (Component)message);
-        }
-        catch (Exception exception) {
-            PanoramaMod.LOGGER.error("Failed to create panorama capture", (Throwable)exception);
-            PanoramaManager.sendClientMessage(client, (Component)Component.translatable((String)"message.panoramamod.capture_failed").withStyle(ChatFormatting.RED));
+            MutableComponent message = Component.translatable("message.panoramamod.capture_saved", captureName)
+                .withStyle(ChatFormatting.GREEN)
+                .append(Component.literal(" "))
+                .append(vanillaMessage.copy())
+                .append(Component.literal(" "))
+                .append(Component.translatable("message.panoramamod.capture_browse").withStyle(ChatFormatting.GRAY));
+            PanoramaManager.sendClientMessage(client, message);
+        } catch (Exception exception) {
+            PanoramaMod.LOGGER.error("Failed to create panorama capture", exception);
+            PanoramaManager.sendClientMessage(client, Component.translatable("message.panoramamod.capture_failed").withStyle(ChatFormatting.RED));
         }
     }
 
@@ -102,34 +96,33 @@ public final class PanoramaManager {
     private static void hidePanoramaRoot(Path root) {
         try {
             Files.setAttribute(root, "dos:hidden", true, new LinkOption[0]);
-        }
-        catch (IOException | IllegalArgumentException | SecurityException | UnsupportedOperationException exception) {
-            PanoramaMod.LOGGER.debug("Could not apply hidden attribute to panorama folder {}", (Object)root, (Object)exception);
+        } catch (IOException | IllegalArgumentException | SecurityException | UnsupportedOperationException exception) {
+            PanoramaMod.LOGGER.debug("Could not apply hidden attribute to panorama folder {}", root, exception);
         }
     }
 
     public static List<PanoramaCapture> loadCaptures(Minecraft client) {
         Path root = PanoramaManager.getPanoramaRoot(client);
-        ArrayList<PanoramaCapture> captures = new ArrayList<PanoramaCapture>();
+        ArrayList<PanoramaCapture> captures = new ArrayList<>();
         if (!Files.isDirectory(root, new LinkOption[0])) {
             return captures;
         }
         PanoramaManager.hidePanoramaRoot(root);
-        try (Stream<Path> directories = Files.list(root);){
-            directories.filter(x$0 -> Files.isDirectory(x$0, new LinkOption[0])).sorted(Comparator.reverseOrder()).forEach(directory -> {
-                try {
-                    Path previewImage = PanoramaManager.findPreviewImage(directory);
-                    if (previewImage != null) {
-                        captures.add(new PanoramaCapture(PanoramaManager.readCaptureName(directory), directory.getFileName().toString(), (Path)directory, previewImage));
+        try (Stream<Path> directories = Files.list(root)) {
+            directories.filter(x -> Files.isDirectory(x, new LinkOption[0]))
+                .sorted(Comparator.reverseOrder())
+                .forEach(directory -> {
+                    try {
+                        Path previewImage = PanoramaManager.findPreviewImage(directory);
+                        if (previewImage != null) {
+                            captures.add(new PanoramaCapture(PanoramaManager.readCaptureName(directory), directory.getFileName().toString(), directory, previewImage));
+                        }
+                    } catch (IOException exception) {
+                        PanoramaMod.LOGGER.warn("Skipping invalid panorama capture at {}", directory, exception);
                     }
-                }
-                catch (IOException exception) {
-                    PanoramaMod.LOGGER.warn("Skipping invalid panorama capture at {}", directory, (Object)exception);
-                }
-            });
-        }
-        catch (IOException exception) {
-            PanoramaMod.LOGGER.error("Failed to load panorama captures", (Throwable)exception);
+                });
+        } catch (IOException exception) {
+            PanoramaMod.LOGGER.error("Failed to load panorama captures", exception);
         }
         return captures;
     }
@@ -143,22 +136,22 @@ public final class PanoramaManager {
         Files.createDirectories(resourcePackDir, new FileAttribute[0]);
         String packFileName = PanoramaManager.nextPackFileName(resourcePackDir, capture.name());
         Path packZip = resourcePackDir.resolve(packFileName);
-        try (ZipOutputStream output = new ZipOutputStream(Files.newOutputStream(packZip, new OpenOption[0]));){
+        try (ZipOutputStream output = new ZipOutputStream(Files.newOutputStream(packZip, new OpenOption[0]))) {
             PanoramaManager.writeZipText(output, "pack.mcmeta", PanoramaManager.buildPackDescription(capture.name()));
             PanoramaManager.writeZipFile(output, "pack.png", capture.previewImage());
             for (Path source : panoramaFiles) {
-                PanoramaManager.writeZipFile(output, "assets/minecraft/textures/gui/title/background/" + String.valueOf(source.getFileName()), source);
+                PanoramaManager.writeZipFile(output, "assets/minecraft/textures/gui/title/background/" + source.getFileName(), source);
             }
         }
         return packFileName;
     }
 
     private static List<Path> listPanoramaFiles(Path captureDirectory) throws IOException {
-        ArrayList<Path> panoramaFiles = new ArrayList<Path>();
+        ArrayList<Path> panoramaFiles = new ArrayList<>();
         if (!Files.isDirectory(captureDirectory, new LinkOption[0])) {
             return panoramaFiles;
         }
-        try (Stream<Path> files = Files.walk(captureDirectory, 4, new FileVisitOption[0]);){
+        try (Stream<Path> files = Files.walk(captureDirectory, 4, new FileVisitOption[0])) {
             files.filter(path -> {
                 String name = path.getFileName().toString();
                 return name.startsWith("panorama_") && name.endsWith(".png");
@@ -232,11 +225,11 @@ public final class PanoramaManager {
     }
 
     public static void renamePanorama(PanoramaCapture capture, String requestedName) throws IOException {
-        Files.writeString(capture.directory().resolve(NAME_FILE), (CharSequence)PanoramaManager.normalizeCaptureName(requestedName), new OpenOption[0]);
+        Files.writeString(capture.directory().resolve(NAME_FILE), PanoramaManager.normalizeCaptureName(requestedName), new OpenOption[0]);
     }
 
     public static void deletePanorama(PanoramaCapture capture) throws IOException {
-        try (Stream<Path> paths = Files.walk(capture.directory(), new FileVisitOption[0]);){
+        try (Stream<Path> paths = Files.walk(capture.directory(), new FileVisitOption[0])) {
             List<Path> files = paths.sorted(Comparator.reverseOrder()).toList();
             for (Path path : files) {
                 Files.deleteIfExists(path);
@@ -251,11 +244,10 @@ public final class PanoramaManager {
     public static void openPanoramaFolder(Minecraft client) {
         try {
             Path root = PanoramaManager.ensurePanoramaRoot(client);
-            net.minecraft.Util.getPlatform().openUri(root.toUri());
-        }
-        catch (IOException exception) {
-            PanoramaMod.LOGGER.error("Failed to open panorama folder", (Throwable)exception);
-            PanoramaManager.sendClientMessage(client, (Component)Component.translatable((String)"message.panoramamod.open_failed").withStyle(ChatFormatting.RED));
+            Util.getPlatform().openUri(root.toUri());
+        } catch (IOException exception) {
+            PanoramaMod.LOGGER.error("Failed to open panorama folder", exception);
+            PanoramaManager.sendClientMessage(client, Component.translatable("message.panoramamod.open_failed").withStyle(ChatFormatting.RED));
         }
     }
 
@@ -266,4 +258,3 @@ public final class PanoramaManager {
     public record PanoramaCapture(String name, String folderName, Path directory, Path previewImage) {
     }
 }
-

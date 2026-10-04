@@ -7,7 +7,6 @@ import dev.nicho.panoramamod.PanoramaOptionsScreen;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -17,48 +16,52 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class PanoramaBrowserScreen extends Screen {
     private static final int TILES_PER_PAGE = 6;
     private static final int TILE_SIZE = 118;
     private static final int TILE_GAP = 18;
     private final Screen parent;
-    private final List<Tile> tiles = new ArrayList<Tile>();
+    private final List<Tile> tiles = new ArrayList<>();
     private List<PanoramaManager.PanoramaCapture> captures = List.of();
     private int page;
 
     public PanoramaBrowserScreen(Screen parent) {
-        super((Component)Component.translatable((String)"screen.panoramamod.title"));
+        super(Component.translatable("screen.panoramamod.title"));
         this.parent = parent;
     }
 
+    @Override
     protected void init() {
         this.captures = PanoramaManager.loadCaptures(this.minecraft);
         int footerY = this.height - 28;
-        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"gui.back"), button -> this.onClose()).bounds(20, footerY, 80, 20).build());
-        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.folder"), button -> PanoramaManager.openPanoramaFolder(this.minecraft)).bounds(110, footerY, 100, 20).build());
-        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.refresh"), button -> this.refreshCaptures()).bounds(220, footerY, 80, 20).build());
-        this.addRenderableWidget(Button.builder((Component)Component.literal((String)"<"), button -> this.changePage(-1)).bounds(this.width - 110, footerY, 20, 20).build());
-        this.addRenderableWidget(Button.builder((Component)Component.literal((String)">"), button -> this.changePage(1)).bounds(this.width - 80, footerY, 20, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), button -> this.onClose()).bounds(20, footerY, 80, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.folder"), button -> PanoramaManager.openPanoramaFolder(this.minecraft)).bounds(110, footerY, 100, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.refresh"), button -> this.refreshCaptures()).bounds(220, footerY, 80, 20).build());
+        this.addRenderableWidget(Button.builder(Component.literal("<"), button -> this.changePage(-1)).bounds(this.width - 110, footerY, 20, 20).build());
+        this.addRenderableWidget(Button.builder(Component.literal(">"), button -> this.changePage(1)).bounds(this.width - 80, footerY, 20, 20).build());
         this.rebuildTiles();
     }
 
+    @Override
     public void onClose() {
         this.minecraft.setScreenAndShow(this.parent);
     }
 
+    @Override
     public void removed() {
         this.destroyTiles();
     }
 
+    @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float deltaTicks) {
         this.extractTransparentBackground(guiGraphics);
         super.extractRenderState(guiGraphics, mouseX, mouseY, deltaTicks);
         guiGraphics.text(this.font, this.title, 20, 20, 0xFFFFFF, true);
-        guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.subtitle_grid"), 20, 36, 0xAFAFAF, true);
+        guiGraphics.text(this.font, Component.translatable("screen.panoramamod.subtitle_grid"), 20, 36, 0xAFAFAF, true);
         if (this.tiles.isEmpty()) {
-            guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.empty"), 20, 64, 0xAFAFAF, true);
+            guiGraphics.text(this.font, Component.translatable("screen.panoramamod.empty"), 20, 64, 0xAFAFAF, true);
             return;
         }
         for (Tile tile : this.tiles) {
@@ -75,13 +78,13 @@ public final class PanoramaBrowserScreen extends Screen {
         if (tile.textureId != null) {
             guiGraphics.blit(tile.textureId, tile.x + 4, tile.y + 4, 110, 110, 0.0f, 0.0f, 110, 110, 110, 110);
         } else {
-            guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.preview_failed"), tile.x + 8, tile.y + 10, 0xFF8080, true);
+            guiGraphics.text(this.font, Component.translatable("screen.panoramamod.preview_failed"), tile.x + 8, tile.y + 10, 0xFF8080, true);
         }
         String name = this.trimToWidth(tile.capture.name(), 118);
         String folder = this.trimToWidth(tile.capture.folderName(), 118);
         this.drawCenteredText(guiGraphics, name, tile.x, tile.y + 118 + 8, 118, 0xFFFFFF);
         this.drawCenteredText(guiGraphics, folder, tile.x, tile.y + 118 + 20, 118, 0xAFAFAF);
-        this.drawCenteredText(guiGraphics, (Component)Component.translatable((String)"screen.panoramamod.tile_hint"), tile.x, tile.y + 118 + 32, 118, 0x7F7F7F);
+        this.drawCenteredText(guiGraphics, Component.translatable("screen.panoramamod.tile_hint"), tile.x, tile.y + 118 + 32, 118, 0x7F7F7F);
     }
 
     private void refreshCaptures() {
@@ -109,49 +112,28 @@ public final class PanoramaBrowserScreen extends Screen {
             int x = gridX + column * 136;
             int y = gridY + row * 176;
             PanoramaManager.PanoramaCapture capture = this.captures.get(index);
-            Button button = this.addRenderableWidget(Button.builder((Component)Component.empty(), widget -> this.openCaptureOptions(capture)).bounds(x, y, 118, 118).build());
+            Button button = this.addRenderableWidget(Button.builder(Component.empty(), widget -> this.openCaptureOptions(capture)).bounds(x, y, 118, 118).build());
             Identifier textureId = this.loadTileTexture(capture);
             this.tiles.add(new Tile(capture, button, textureId, x, y));
         }
     }
 
     private void openCaptureOptions(PanoramaManager.PanoramaCapture capture) {
-        this.minecraft.setScreenAndShow((Screen)new PanoramaOptionsScreen(this.parent, capture));
+        this.minecraft.setScreenAndShow(new PanoramaOptionsScreen(this.parent, capture));
     }
 
     private Identifier loadTileTexture(PanoramaManager.PanoramaCapture capture) {
-        Identifier identifier;
-        block8: {
-            InputStream input = Files.newInputStream(capture.previewImage(), new OpenOption[0]);
-            try {
-                NativeImage image = NativeImage.read((InputStream)input);
-                DynamicTexture texture = new DynamicTexture(() -> "Panorama preview", image);
-                texture.upload();
-                Identifier identifier2 = Identifier.fromNamespaceAndPath((String)"panoramamod", (String)("preview/" + capture.folderName()));
-                this.minecraft.getTextureManager().register(identifier2, (AbstractTexture)texture);
-                identifier = identifier2;
-                if (input == null) break block8;
-            }
-            catch (Throwable throwable) {
-                try {
-                    if (input != null) {
-                        try {
-                            input.close();
-                        }
-                        catch (Throwable throwable2) {
-                            throwable.addSuppressed(throwable2);
-                        }
-                    }
-                    throw throwable;
-                }
-                catch (IOException exception) {
-                    PanoramaMod.LOGGER.warn("Failed to load preview for {}", (Object)capture.directory(), (Object)exception);
-                    return null;
-                }
-            }
-            input.close();
+        try (InputStream input = Files.newInputStream(capture.previewImage())) {
+            NativeImage image = NativeImage.read(input);
+            DynamicTexture texture = new DynamicTexture(() -> "Panorama preview", image);
+            texture.upload();
+            Identifier identifier = Identifier.fromNamespaceAndPath("panoramamod", "preview/" + capture.folderName());
+            this.minecraft.getTextureManager().register(identifier, texture);
+            return identifier;
+        } catch (IOException exception) {
+            PanoramaMod.LOGGER.warn("Failed to load preview for {}", capture.directory(), exception);
+            return null;
         }
-        return identifier;
     }
 
     private void destroyTiles() {
@@ -164,11 +146,11 @@ public final class PanoramaBrowserScreen extends Screen {
     }
 
     private void drawCenteredText(GuiGraphicsExtractor guiGraphics, String text, int x, int y, int width, int color) {
-        guiGraphics.text(this.font, (Component)Component.literal((String)text), x + (width - this.font.width(text)) / 2, y, color, true);
+        guiGraphics.text(this.font, Component.literal(text), x + (width - this.font.width(text)) / 2, y, color, true);
     }
 
     private void drawCenteredText(GuiGraphicsExtractor guiGraphics, Component text, int x, int y, int width, int color) {
-        guiGraphics.text(this.font, text, x + (width - this.font.width((FormattedText)text)) / 2, y, color, true);
+        guiGraphics.text(this.font, text, x + (width - this.font.width(text)) / 2, y, color, true);
     }
 
     private String trimToWidth(String value, int width) {

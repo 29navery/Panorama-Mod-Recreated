@@ -12,53 +12,70 @@ import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public final class PanoramaRenameScreen
-extends Screen {
+public final class PanoramaRenameScreen extends Screen {
     private final Screen parent;
     private final PanoramaManager.PanoramaCapture capture;
     private EditBox nameField;
     private Button renameButton;
 
     public PanoramaRenameScreen(Screen parent, PanoramaManager.PanoramaCapture capture) {
-        super((Component)Component.translatable((String)"screen.panoramamod.rename_title"));
+        super(Component.translatable("screen.panoramamod.rename_title"));
         this.parent = parent;
         this.capture = capture;
     }
 
+    @Override
     protected void init() {
         int centerX = this.width / 2;
-        this.nameField = new EditBox(this.font, centerX - 120, this.height / 2 - 10, 240, 20, (Component)Component.translatable((String)"screen.panoramamod.name_field"));
+        this.nameField = new EditBox(this.font, centerX - 120, this.height / 2 - 10, 240, 20, Component.translatable("screen.panoramamod.name_field"));
         this.nameField.setMaxLength(40);
         this.nameField.setValue(this.capture.name());
         this.nameField.setResponder(value -> {
-            this.renameButton.active = !value.trim().isEmpty();
+            if (this.renameButton != null) {
+                this.renameButton.active = !value.trim().isEmpty();
+            }
         });
         this.addRenderableWidget(this.nameField);
         this.setInitialFocus(this.nameField);
-        this.renameButton = this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.rename"), button -> this.renameCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
-        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
+        
+        this.renameButton = this.addRenderableWidget(
+            Button.builder(Component.translatable("button.panoramamod.rename"), button -> this.renameCapture())
+                .bounds(centerX - 120, this.height / 2 + 24, 116, 20)
+                .build()
+        );
+        this.addRenderableWidget(
+            Button.builder(Component.translatable("gui.cancel"), button -> this.onClose())
+                .bounds(centerX + 4, this.height / 2 + 24, 116, 20)
+                .build()
+        );
         this.renameButton.active = !this.nameField.getValue().trim().isEmpty();
     }
 
+    @Override
     public void onClose() {
-        this.minecraft.setScreenAndShow((Screen)new PanoramaOptionsScreen(this.parent, this.capture));
+        this.minecraft.setScreenAndShow(new PanoramaOptionsScreen(this.parent, this.capture));
     }
 
+    @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float deltaTicks) {
-        this.addRenderableWidget(this.nameField);
         super.extractRenderState(guiGraphics, mouseX, mouseY, deltaTicks);
-        this.renameButton = this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.rename"), button -> this.renameCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
     }
 
     private void renameCapture() {
         try {
             PanoramaManager.renamePanorama(this.capture, this.nameField.getValue());
-            this.minecraft.setScreenAndShow((Screen)new AlertScreen(() -> this.minecraft.setScreenAndShow((Screen)new PanoramaBrowserScreen(this.parent)), (Component)Component.translatable((String)"screen.panoramamod.rename_success_title"), (Component)Component.translatable((String)"screen.panoramamod.rename_success_body", (Object[])new Object[]{this.nameField.getValue().trim()})));
-        }
-        catch (IOException exception) {
-            PanoramaMod.LOGGER.error("Failed to rename panorama {}", (Object)this.capture.directory(), (Object)exception);
-            this.minecraft.setScreenAndShow((Screen)new AlertScreen(() -> this.minecraft.setScreenAndShow((Screen)new PanoramaOptionsScreen(this.parent, this.capture)), (Component)Component.translatable((String)"screen.panoramamod.rename_failed_title"), (Component)Component.translatable((String)"screen.panoramamod.rename_failed_body", (Object[])new Object[]{this.capture.name()})));
+            this.minecraft.setScreenAndShow(new AlertScreen(
+                () -> this.minecraft.setScreenAndShow(new PanoramaBrowserScreen(this.parent)),
+                Component.translatable("screen.panoramamod.rename_success_title"),
+                Component.translatable("screen.panoramamod.rename_success_body", this.nameField.getValue().trim())
+            ));
+        } catch (IOException exception) {
+            PanoramaMod.LOGGER.error("Failed to rename panorama {}", this.capture.directory(), exception);
+            this.minecraft.setScreenAndShow(new AlertScreen(
+                () -> this.minecraft.setScreenAndShow(new PanoramaOptionsScreen(this.parent, this.capture)),
+                Component.translatable("screen.panoramamod.rename_failed_title"),
+                Component.translatable("screen.panoramamod.rename_failed_body", this.capture.name())
+            ));
         }
     }
 }
