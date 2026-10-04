@@ -19,7 +19,7 @@ public final class PanoramaSettingsScreen extends Screen {
 
         this.addRenderableWidget(
             Button.builder(Component.translatable("button.panoramamod.capture"), button -> {
-                this.minecraft.setScreen(null);
+                this.onClose();
                 this.minecraft.setScreenAndShow(new PanoramaNamingScreen(this.parent));
             })
             .bounds(centerX - 104, buttonY, 208, 20)

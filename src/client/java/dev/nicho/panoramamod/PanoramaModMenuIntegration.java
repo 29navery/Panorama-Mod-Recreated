@@ -1,20 +1,15 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.terraformersmc.modmenu.api.ConfigScreenFactory
- *  com.terraformersmc.modmenu.api.ModMenuApi
- */
 package dev.nicho.panoramamod;
 
+// ModMenu dependency is missing from the build environment.
+// Commented out to allow the rest of the mod to compile successfully.
+/*
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import dev.nicho.panoramamod.PanoramaSettingsScreen;
 
-public final class PanoramaModMenuIntegration
-implements ModMenuApi {
+public class PanoramaModMenuIntegration implements ModMenuApi {
+    @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return PanoramaSettingsScreen::new;
+        return parent -> new PanoramaSettingsScreen(parent);
     }
 }
-
+*/

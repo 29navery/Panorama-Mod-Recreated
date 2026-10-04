@@ -45,10 +45,10 @@ extends Screen {
     }
 
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float deltaTicks) {
-        this.extractTransparentBackground(guiGraphics);
+        this.addRenderableWidget(this.nameField);
         super.extractRenderState(guiGraphics, mouseX, mouseY, deltaTicks);
-        guiGraphics.text(this.font, this.title, this.width / 2 - 120, this.height / 2 - 38, 0xFFFFFF, true);
-        guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.rename_subtitle"), this.width / 2 - 120, this.height / 2 - 24, 0xAFAFAF, true);
+        this.renameButton = this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.rename"), button -> this.renameCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
     }
 
     private void renameCapture() {

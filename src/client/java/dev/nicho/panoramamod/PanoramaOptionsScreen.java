@@ -39,8 +39,10 @@ extends Screen {
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float deltaTicks) {
         this.extractTransparentBackground(guiGraphics);
         super.extractRenderState(guiGraphics, mouseX, mouseY, deltaTicks);
-        guiGraphics.text(this.font, this.title, this.width / 2 - this.font.width((FormattedText)this.title) / 2, this.height / 2 - 72, 0xFFFFFF, true);
-        guiGraphics.text(this.font, (Component)Component.literal((String)this.capture.name()), this.width / 2 - this.font.width(this.capture.name()) / 2, this.height / 2 - 56, 0xAFAFAF, true);
+        this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.export"), button -> this.exportCapture()).bounds(centerX - 104, buttonY, 208, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.rename"), button -> this.minecraft.setScreen(new PanoramaRenameScreen(this.parent, this.capture))).bounds(centerX - 104, buttonY + 24, 208, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("button.panoramamod.delete"), button -> this.deleteCapture()).bounds(centerX - 104, buttonY + 48, 208, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), button -> this.onClose()).bounds(centerX - 104, buttonY + 82, 208, 20).build());
     }
 
     private void exportCapture() {

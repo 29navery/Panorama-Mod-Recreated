@@ -13,16 +13,13 @@ import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public final class PanoramaBrowserScreen
-extends Screen {
-    private static final RenderType PREVIEW_RENDER_TYPE = RenderType.guiTextured(Identifier.fromNamespaceAndPath("panoramamod", "textures/gui/preview.png")); // Or appropriate render type depending on version
+public final class PanoramaBrowserScreen extends Screen {
     private static final int TILES_PER_PAGE = 6;
     private static final int TILE_SIZE = 118;
     private static final int TILE_GAP = 18;
