@@ -1,15 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiGraphicsExtractor
- *  net.minecraft.client.gui.components.Button
- *  net.minecraft.client.gui.components.events.GuiEventListener
- *  net.minecraft.client.gui.screens.AlertScreen
- *  net.minecraft.client.gui.screens.Screen
- *  net.minecraft.network.chat.Component
- *  net.minecraft.network.chat.FormattedText
- */
 package dev.nicho.panoramamod;
 
 import dev.nicho.panoramamod.PanoramaBrowserScreen;
@@ -19,7 +7,6 @@ import dev.nicho.panoramamod.PanoramaRenameScreen;
 import java.io.IOException;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.AlertScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -39,10 +26,10 @@ extends Screen {
     protected void init() {
         int centerX = this.width / 2;
         int buttonY = this.height / 2 - 34;
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.export"), button -> this.exportCapture()).bounds(centerX - 104, buttonY, 208, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.rename"), button -> this.minecraft.setScreenAndShow((Screen)new PanoramaRenameScreen(this.parent, this.capture))).bounds(centerX - 104, buttonY + 24, 208, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.delete"), button -> this.deleteCapture()).bounds(centerX - 104, buttonY + 48, 208, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"gui.back"), button -> this.onClose()).bounds(centerX - 104, buttonY + 82, 208, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.export"), button -> this.exportCapture()).bounds(centerX - 104, buttonY, 208, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.rename"), button -> this.minecraft.setScreenAndShow((Screen)new PanoramaRenameScreen(this.parent, this.capture))).bounds(centerX - 104, buttonY + 24, 208, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.delete"), button -> this.deleteCapture()).bounds(centerX - 104, buttonY + 48, 208, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"gui.back"), button -> this.onClose()).bounds(centerX - 104, buttonY + 82, 208, 20).build());
     }
 
     public void onClose() {
@@ -78,4 +65,3 @@ extends Screen {
         }
     }
 }
-

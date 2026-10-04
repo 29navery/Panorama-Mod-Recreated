@@ -1,22 +1,5 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.mojang.blaze3d.pipeline.RenderPipeline
- *  com.mojang.blaze3d.platform.NativeImage
- *  net.minecraft.client.gui.GuiGraphicsExtractor
- *  net.minecraft.client.gui.components.Button
- *  net.minecraft.client.gui.screens.Screen
- *  net.minecraft.client.renderer.RenderPipelines
- *  net.minecraft.client.renderer.texture.AbstractTexture
- *  net.minecraft.client.renderer.texture.DynamicTexture
- *  net.minecraft.network.chat.Component
- *  net.minecraft.network.chat.FormattedText
- *  net.minecraft.resources.Identifier
- */
 package dev.nicho.panoramamod;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.NativeImage;
 import dev.nicho.panoramamod.PanoramaManager;
 import dev.nicho.panoramamod.PanoramaMod;
@@ -30,7 +13,7 @@ import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
@@ -39,7 +22,7 @@ import net.minecraft.resources.Identifier;
 
 public final class PanoramaBrowserScreen
 extends Screen {
-    private static final RenderPipeline PREVIEW_PIPELINE = RenderPipelines.GUI_TEXTURED;
+    private static final RenderType PREVIEW_RENDER_TYPE = RenderType.guiTextured(Identifier.fromNamespaceAndPath("panoramamod", "textures/gui/preview.png")); // Or appropriate render type depending on version
     private static final int TILES_PER_PAGE = 6;
     private static final int TILE_SIZE = 118;
     private static final int TILE_GAP = 18;
@@ -93,7 +76,7 @@ extends Screen {
         guiGraphics.fill(tile.x, tile.y, tile.x + 1, tile.y + 118, -1);
         guiGraphics.fill(tile.x + 118 - 1, tile.y, tile.x + 118, tile.y + 118, -1);
         if (tile.textureId != null) {
-            guiGraphics.blit(PREVIEW_PIPELINE, tile.textureId, tile.x + 4, tile.y + 4, 0.0f, 0.0f, 110, 110, 110, 110);
+            guiGraphics.blit(tile.textureId, tile.x + 4, tile.y + 4, 110, 110, 0.0f, 0.0f, 110, 110, 110, 110);
         } else {
             guiGraphics.text(this.font, (Component)Component.translatable((String)"screen.panoramamod.preview_failed"), tile.x + 8, tile.y + 10, 0xFF8080, true);
         }

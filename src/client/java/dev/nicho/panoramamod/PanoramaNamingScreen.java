@@ -1,21 +1,9 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  net.minecraft.client.gui.GuiGraphicsExtractor
- *  net.minecraft.client.gui.components.Button
- *  net.minecraft.client.gui.components.EditBox
- *  net.minecraft.client.gui.components.events.GuiEventListener
- *  net.minecraft.client.gui.screens.Screen
- *  net.minecraft.network.chat.Component
- */
 package dev.nicho.panoramamod;
 
 import dev.nicho.panoramamod.PanoramaManager;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -38,10 +26,10 @@ extends Screen {
         this.nameField.setResponder(value -> {
             this.createButton.active = !value.trim().isEmpty();
         });
-        this.addRenderableWidget((GuiEventListener)this.nameField);
-        this.setInitialFocus((GuiEventListener)this.nameField);
-        this.createButton = (Button)this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"button.panoramamod.start_capture"), button -> this.startCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
-        this.addRenderableWidget((GuiEventListener)Button.builder((Component)Component.translatable((String)"gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
+        this.addRenderableWidget(this.nameField);
+        this.setInitialFocus(this.nameField);
+        this.createButton = this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"button.panoramamod.start_capture"), button -> this.startCapture()).bounds(centerX - 120, this.height / 2 + 24, 116, 20).build());
+        this.addRenderableWidget(Button.builder((Component)Component.translatable((String)"gui.cancel"), button -> this.onClose()).bounds(centerX + 4, this.height / 2 + 24, 116, 20).build());
         this.createButton.active = !this.nameField.getValue().trim().isEmpty();
     }
 
@@ -62,4 +50,3 @@ extends Screen {
         }
     }
 }
-
