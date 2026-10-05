@@ -25,10 +25,6 @@ On Windows, run `gradlew.bat clean build`. The installable mod and source JAR ar
 
 The build runs six regression tests covering capture discovery, renaming, recursive deletion, incomplete/duplicate faces, safe repeated exports, and exported metadata decoded by Minecraft 26.3's actual resource-pack codec. These tests do not launch the graphical client or capture a live world.
 
-## Source recovery
-
-All ten Java files were restored from the repository's first commit (`6aa7b99`), which contained the decompiled 26.2 mod. The recovered code was cleaned up and ported to 26.3: RenderPearl rendering, SDL keyboard constants, the new folder-opening API, optional Mod Menu integration, opaque GUI text, and current resource-pack format ranges.
-
 ## License
 
 CC-BY-NC-4.0; see [LICENSE](LICENSE).
