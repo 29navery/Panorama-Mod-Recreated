@@ -31,4 +31,4 @@ All ten Java files were restored from the repository's first commit (`6aa7b99`),
 
 ## License
 
-CC0-1.0; see [LICENSE](LICENSE).
+CC-BY-NC-4.0; see [LICENSE](LICENSE).
