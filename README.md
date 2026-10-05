@@ -4,7 +4,7 @@ A client-side Fabric mod for Minecraft **26.3**. Capture six panorama faces from
 
 ## Install and use
 
-Requires **Java 25**, **Fabric Loader 0.19.5 or newer**, and **Fabric API for Minecraft 26.3**. Put the normal `panoramamod-1.1.1+mc26.3.jar` in your instance's `mods` folder. Do not install the `-sources.jar`. Mod Menu 21.0.0 is optional and adds a shortcut to the settings screen.
+Requires **Java 25**, **Fabric Loader 0.19.5 or newer**, and **Fabric API for Minecraft 26.3**. Put the normal `panoramamod-1.1.0+mc26.3.jar` in your instance's `mods` folder. Do not install the `-sources.jar`. Mod Menu 21.0.0 is optional and adds a shortcut to the settings screen.
 
 - **F6** in a world: name and capture a panorama. Minecraft captures six 4096×4096 images, so this can take a moment.
 - **F7**: open Panorama Settings. Both keys can be changed in Minecraft's Controls menu.
