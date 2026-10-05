@@ -1,27 +1,23 @@
 package dev.nicho.panoramamod;
 
-import dev.nicho.panoramamod.PanoramaManager;
-import dev.nicho.panoramamod.PanoramaNamingScreen;
-import dev.nicho.panoramamod.PanoramaSettingsScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
-public final class PanoramaModClient implements ClientModInitializer {
+public final class PanoramaModClient
+implements ClientModInitializer {
     private static KeyMapping captureKey;
     private static KeyMapping settingsKey;
 
-    @Override
     public void onInitializeClient() {
         KeyMapping.Category category = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("panoramamod", "general"));
-        captureKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.panoramamod.capture", InputUtil.Type.KEYSYM, 295, category));
-        settingsKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.panoramamod.settings", InputUtil.Type.KEYSYM, 296, category));
+        captureKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.panoramamod.capture", InputConstants.Type.KEYBOARD, InputConstants.KEY_F6, category));
+        settingsKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.panoramamod.settings", InputConstants.Type.KEYBOARD, InputConstants.KEY_F7, category));
         ClientTickEvents.END_CLIENT_TICK.register(PanoramaManager::tick);
         ClientTickEvents.END_CLIENT_TICK.register(PanoramaModClient::handleKeybinds);
     }
