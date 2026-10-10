@@ -21,6 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class PanoramaManagerTest {
     @TempDir Path temporary;
 
+    @Test
+    void captureErrorsAreNeverReportedAsSaved() {
+        assertTrue(PanoramaManager.captureSucceeded(net.minecraft.network.chat.Component.translatable("screenshot.success", "folder")));
+        assertFalse(PanoramaManager.captureSucceeded(net.minecraft.network.chat.Component.translatable("screenshot.failure", "GPU fence")));
+        assertFalse(PanoramaManager.captureSucceeded(net.minecraft.network.chat.Component.literal("error")));
+    }
+
     @BeforeAll
     static void initializeMinecraftVersion() {
         SharedConstants.tryDetectVersion();

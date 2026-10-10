@@ -21,6 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import com.mojang.blaze3d.Blaze3D;
 
 public final class PanoramaManager {
@@ -67,6 +68,12 @@ public final class PanoramaManager {
             Files.createDirectories(outputDirectory);
             Files.writeString(outputDirectory.resolve(NAME_FILE), captureName);
             Component vanillaMessage = client.grabPanoramixScreenshot(outputDirectory.toFile());
+            if (!captureSucceeded(vanillaMessage)) {
+                PanoramaMod.LOGGER.error("Panorama capture failed: {}", vanillaMessage.getString());
+                PanoramaManager.sendClientMessage(client, Component.translatable("message.panoramamod.capture_failed")
+                    .withStyle(ChatFormatting.RED).append(Component.literal(" ")).append(vanillaMessage.copy()));
+                return;
+            }
             MutableComponent message = Component.translatable("message.panoramamod.capture_saved", new Object[]{captureName}).withStyle(ChatFormatting.GREEN).append(Component.literal(" ")).append(vanillaMessage.copy()).append(Component.literal(" ")).append(Component.translatable("message.panoramamod.capture_browse").withStyle(ChatFormatting.GRAY));
             PanoramaManager.sendClientMessage(client, message);
         }
@@ -74,6 +81,11 @@ public final class PanoramaManager {
             PanoramaMod.LOGGER.error("Failed to create panorama capture", exception);
             PanoramaManager.sendClientMessage(client, Component.translatable("message.panoramamod.capture_failed").withStyle(ChatFormatting.RED));
         }
+    }
+
+    static boolean captureSucceeded(Component result) {
+        return result.getContents() instanceof TranslatableContents translation
+            && "screenshot.success".equals(translation.getKey());
     }
 
     private static Path getPanoramaRoot(Minecraft client) {

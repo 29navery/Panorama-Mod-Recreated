@@ -9,6 +9,8 @@ on: [pull_request, push]
 jobs:
   build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - name: checkout repository
         uses: actions/checkout@v6
@@ -28,3 +30,25 @@ jobs:
         with:
           name: Artifacts
           path: build/libs/
+      - name: publish approved 1.2.0 release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(sed -n 's/^version=//p' gradle.properties)
+          if [ "$version" != '1.2.0+mc26.3' ]; then
+            exit 0
+          fi
+          tag="v$version"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag already exists."
+            exit 0
+          fi
+          gh release create "$tag" \
+            "build/libs/panoramamod-$version.jar" \
+            "build/libs/panoramamod-$version-sources.jar" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Panorama Mod 1.2.0 for Minecraft 26.3" \
+            --notes-file RELEASE_NOTES_1.2.0.md \
+            --latest

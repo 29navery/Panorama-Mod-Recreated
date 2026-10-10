@@ -3,7 +3,8 @@
 	"package": "dev.nicho.panoramamod.mixin.client",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"TitleScreenMixin"
+		"TitleScreenMixin",
+		"PanoramaCaptureMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
